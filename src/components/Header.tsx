@@ -2,13 +2,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const navItems = [
-  { name: "Services", hasDropdown: true },
-  { name: "Industries", hasDropdown: true },
-  { name: "Results", hasDropdown: false },
-  { name: "About", hasDropdown: true },
-  { name: "Resources", hasDropdown: true },
+  { name: "Services", href: "/services", hasDropdown: false },
+  { name: "Industries", href: "#", hasDropdown: true },
+  { name: "Results", href: "#", hasDropdown: false },
+  { name: "About", href: "#", hasDropdown: true },
+  { name: "Resources", href: "#", hasDropdown: true },
 ];
 
 export const Header = () => {
@@ -19,31 +20,32 @@ export const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <motion.a
-            href="/"
-            className="flex items-center gap-2"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-heading font-bold text-xl">D</span>
-            </div>
-            <span className="font-heading font-bold text-xl text-foreground">
-              Digital<span className="gradient-text">FX</span>
-            </span>
-          </motion.a>
+          <Link to="/">
+            <motion.div
+              className="flex items-center gap-2"
+              whileHover={{ scale: 1.02 }}
+            >
+              <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-heading font-bold text-xl">D</span>
+              </div>
+              <span className="font-heading font-bold text-xl text-foreground">
+                Digital<span className="gradient-text">FX</span>
+              </span>
+            </motion.div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
             {navItems.map((item) => (
-              <motion.a
-                key={item.name}
-                href="#"
-                className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors font-medium"
-                whileHover={{ y: -2 }}
-              >
-                {item.name}
-                {item.hasDropdown && <ChevronDown className="w-4 h-4" />}
-              </motion.a>
+              <Link key={item.name} to={item.href}>
+                <motion.span
+                  className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors font-medium"
+                  whileHover={{ y: -2 }}
+                >
+                  {item.name}
+                  {item.hasDropdown && <ChevronDown className="w-4 h-4" />}
+                </motion.span>
+              </Link>
             ))}
           </nav>
 
@@ -78,13 +80,14 @@ export const Header = () => {
           >
             <div className="container mx-auto px-4 py-6 space-y-4">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item.name}
-                  href="#"
+                  to={item.href}
                   className="block text-muted-foreground hover:text-foreground transition-colors font-medium py-2"
+                  onClick={() => setIsOpen(false)}
                 >
                   {item.name}
-                </a>
+                </Link>
               ))}
               <div className="pt-4 space-y-3">
                 <Button variant="ghost" className="w-full justify-center">
