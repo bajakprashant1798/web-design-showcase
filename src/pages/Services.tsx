@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CTA } from "@/components/CTA";
@@ -225,10 +226,12 @@ export default function ServicesPage() {
                     ))}
                   </div>
 
-                  <Button variant="gradient" size="lg" className="group">
-                    Get Started
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  <Link to={`/services/${service.id}`}>
+                    <Button variant="gradient" size="lg" className="group">
+                      Learn More
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </div>
 
                 {/* Features Side */}
