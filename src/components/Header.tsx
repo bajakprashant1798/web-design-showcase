@@ -6,10 +6,10 @@ import { Link } from "react-router-dom";
 
 const navItems = [
   { name: "Services", href: "/services", hasDropdown: false },
-  { name: "Industries", href: "#", hasDropdown: true },
-  { name: "Results", href: "#", hasDropdown: false },
-  { name: "About", href: "#", hasDropdown: true },
-  { name: "Resources", href: "#", hasDropdown: true },
+  { name: "Industries", href: "/industries", hasDropdown: false },
+  { name: "Case Studies", href: "/case-studies", hasDropdown: false },
+  { name: "About", href: "/about", hasDropdown: false },
+  { name: "Contact", href: "/contact", hasDropdown: false },
 ];
 
 export const Header = () => {
