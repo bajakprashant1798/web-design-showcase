@@ -6,25 +6,29 @@
 
 @layer base {
   :root {
+    /* WebFX-inspired color palette */
     --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --foreground: 210 40% 17%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 210 40% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 210 40% 17%;
 
-    --primary: 174 72% 40%;
+    /* Revenue Green - WebFX Primary */
+    --primary: 172 100% 33%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    /* Deep Navy - WebFX Secondary */
+    --secondary: 210 40% 17%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 94%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 210 20% 45%;
 
-    --accent: 280 60% 55%;
+    /* Teal Accent */
+    --accent: 174 70% 44%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -32,61 +36,61 @@
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 174 72% 40%;
+    --ring: 172 100% 33%;
 
     --radius: 0.75rem;
 
-    /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(174 72% 40%) 0%, hsl(190 80% 35%) 50%, hsl(280 60% 55%) 100%);
+    /* Custom tokens - WebFX style */
+    --gradient-primary: linear-gradient(135deg, hsl(172 100% 33%) 0%, hsl(174 70% 44%) 50%, hsl(180 60% 35%) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(210 40% 98%) 0%, hsl(210 40% 96%) 100%);
     --gradient-card: linear-gradient(135deg, hsl(0 0% 100% / 0.9) 0%, hsl(210 40% 98% / 0.8) 100%);
-    --gradient-glow: radial-gradient(ellipse at center, hsl(174 72% 40% / 0.1) 0%, transparent 70%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(172 100% 33% / 0.1) 0%, transparent 70%);
     
-    --shadow-glow: 0 0 60px hsl(174 72% 40% / 0.25);
-    --shadow-card: 0 8px 32px hsl(222 47% 11% / 0.08);
-    --shadow-button: 0 4px 24px hsl(174 72% 40% / 0.35);
+    --shadow-glow: 0 0 60px hsl(172 100% 33% / 0.25);
+    --shadow-card: 0 8px 32px hsl(210 40% 17% / 0.08);
+    --shadow-button: 0 4px 24px hsl(172 100% 33% / 0.35);
 
     --font-heading: 'Sora', sans-serif;
     --font-body: 'DM Sans', sans-serif;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 174 72% 40%;
+    --sidebar-foreground: 210 40% 17%;
+    --sidebar-primary: 172 100% 33%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-accent-foreground: 210 40% 17%;
     --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 174 72% 40%;
+    --sidebar-ring: 172 100% 33%;
   }
 
   .dark {
-    --background: 222 47% 6%;
+    --background: 210 40% 6%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 8%;
+    --card: 210 40% 8%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 8%;
+    --popover: 210 40% 8%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 174 72% 56%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 172 100% 40%;
+    --primary-foreground: 210 40% 6%;
 
-    --secondary: 222 47% 12%;
+    --secondary: 210 40% 12%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 222 30% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 210 30% 15%;
+    --muted-foreground: 210 20% 65%;
 
-    --accent: 280 60% 60%;
+    --accent: 174 70% 50%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 174 72% 56%;
+    --border: 210 30% 18%;
+    --input: 210 30% 18%;
+    --ring: 172 100% 40%;
   }
 }
 

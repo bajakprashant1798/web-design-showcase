@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { 
   Facebook, 
   Twitter, 
@@ -12,28 +13,24 @@ import {
 
 const footerLinks = {
   services: [
-    "SEO Services",
-    "PPC Management",
-    "Web Design",
-    "Content Marketing",
-    "Social Media",
-    "Email Marketing",
+    { name: "SEO Services", href: "/services/seo" },
+    { name: "PPC Management", href: "/services/ppc" },
+    { name: "Web Design", href: "/services/web-design" },
+    { name: "Content Marketing", href: "/services/content-marketing" },
+    { name: "Social Media", href: "/services/social-media" },
+    { name: "Email Marketing", href: "/services/email-marketing" },
   ],
   company: [
-    "About Us",
-    "Our Team",
-    "Careers",
-    "Case Studies",
-    "Blog",
-    "Contact",
+    { name: "About Us", href: "/about" },
+    { name: "Case Studies", href: "/case-studies" },
+    { name: "Industries", href: "/industries" },
+    { name: "Contact", href: "/contact" },
   ],
   resources: [
-    "Free Tools",
-    "SEO Checker",
-    "Marketing Guides",
-    "Industry Reports",
-    "Webinars",
-    "Podcast",
+    { name: "All Services", href: "/services" },
+    { name: "Healthcare", href: "/industries" },
+    { name: "E-commerce", href: "/industries" },
+    { name: "SaaS", href: "/industries" },
   ],
 };
 
@@ -52,18 +49,19 @@ export const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <motion.a
-              href="/"
-              className="flex items-center gap-2 mb-6"
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-heading font-bold text-xl">D</span>
-              </div>
-              <span className="font-heading font-bold text-xl text-foreground">
-                Digital<span className="gradient-text">FX</span>
-              </span>
-            </motion.a>
+            <Link to="/">
+              <motion.div
+                className="flex items-center gap-2 mb-6"
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
+                  <span className="text-primary-foreground font-heading font-bold text-xl">D</span>
+                </div>
+                <span className="font-heading font-bold text-xl text-foreground">
+                  Digital<span className="gradient-text">FX</span>
+                </span>
+              </motion.div>
+            </Link>
             
             <p className="text-muted-foreground mb-6 max-w-sm">
               Driving revenue through data-driven digital marketing strategies. 
@@ -108,13 +106,13 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-3">
               {footerLinks.services.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
+                <li key={link.name}>
+                  <Link
+                    to={link.href}
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {link}
-                  </a>
+                    {link.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -126,13 +124,13 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
+                <li key={link.name}>
+                  <Link
+                    to={link.href}
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {link}
-                  </a>
+                    {link.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -140,17 +138,17 @@ export const Footer = () => {
 
           <div>
             <h4 className="font-heading font-semibold text-foreground mb-4">
-              Resources
+              Industries
             </h4>
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
+                <li key={link.name}>
+                  <Link
+                    to={link.href}
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {link}
-                  </a>
+                    {link.name}
+                  </Link>
                 </li>
               ))}
             </ul>
