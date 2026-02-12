@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard,
   Users,
@@ -25,6 +26,13 @@ const navItems = [
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/admin/login");
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -88,13 +96,17 @@ const AdminLayout = () => {
           })}
         </nav>
 
-        <div className="border-t border-border p-4">
+        <div className="border-t border-border p-4 space-y-1">
           <Link to="/">
             <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground">
               <LogOut className="h-4 w-4" />
               Back to Site
             </Button>
           </Link>
+          <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground" onClick={handleSignOut}>
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </Button>
         </div>
       </aside>
 
@@ -110,10 +122,12 @@ const AdminLayout = () => {
           <div className="flex-1" />
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-xs font-bold text-primary">A</span>
+              <span className="text-xs font-bold text-primary">
+                {user?.email?.[0]?.toUpperCase() ?? "A"}
+              </span>
             </div>
             <span className="hidden text-sm font-medium text-foreground sm:block">
-              Admin User
+              {user?.email ?? "Admin User"}
             </span>
           </div>
         </header>
