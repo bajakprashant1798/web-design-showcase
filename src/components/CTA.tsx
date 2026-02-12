@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export const CTA = () => {
   return (
@@ -8,7 +9,8 @@ export const CTA = () => {
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-      
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -29,22 +31,27 @@ export const CTA = () => {
           </motion.div>
 
           <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Ready to <span className="gradient-text">Grow Your Business?</span>
+            Ready to{" "}
+            <span className="gradient-text">Grow Your Business?</span>
           </h2>
-          
+
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Get a free, no-obligation proposal tailored to your business goals. 
+            Get a free, no-obligation proposal tailored to your business goals.
             Let's discuss how we can help you achieve measurable results.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button variant="hero" size="xl">
-              Get Your Free Proposal
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-            <Button variant="outline" size="lg">
-              Schedule a Call
-            </Button>
+            <Link to="/contact">
+              <Button variant="hero" size="xl" className="group">
+                Get Your Free Proposal
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+            <Link to="/contact">
+              <Button variant="outline" size="lg">
+                Schedule a Call
+              </Button>
+            </Link>
           </div>
 
           <p className="text-muted-foreground text-sm mt-8">
