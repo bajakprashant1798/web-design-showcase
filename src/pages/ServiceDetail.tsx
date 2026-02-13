@@ -284,7 +284,7 @@ const servicesData: Record<string, {
       { question: "Will I be able to update the site myself?", answer: "Yes! We typically build on WordPress or other CMS platforms that allow you to easily update content." }
     ]
   },
-  content: {
+  "content-marketing": {
     icon: TrendingUp,
     title: "Content Marketing",
     tagline: "Engage audiences with compelling content that converts",
@@ -367,7 +367,7 @@ const servicesData: Record<string, {
       { question: "Can you work with our existing team?", answer: "Absolutely. We often collaborate with in-house teams, providing strategy, editing, or additional production capacity." }
     ]
   },
-  email: {
+  "email-marketing": {
     icon: Mail,
     title: "Email Marketing",
     tagline: "Nurture leads and drive conversions with strategic email",
@@ -450,7 +450,7 @@ const servicesData: Record<string, {
       { question: "How do you grow our email list?", answer: "We implement opt-in strategies, lead magnets, and conversion optimization to ethically grow your subscriber base." }
     ]
   },
-  social: {
+  "social-media": {
     icon: Share2,
     title: "Social Media Marketing",
     tagline: "Build engaged communities across social platforms",
