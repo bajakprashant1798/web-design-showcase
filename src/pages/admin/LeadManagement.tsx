@@ -24,9 +24,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare, Trash2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -36,6 +47,24 @@ const LeadManagement = () => {
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("all");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("leads").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-leads"] });
+      toast.success("Lead deleted successfully");
+      setLeadToDelete(null);
+      setSelectedLead(null);
+    },
+    onError: () => {
+      toast.error("Failed to delete lead");
+    },
+  });
 
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["admin-leads"],
@@ -145,7 +174,17 @@ const LeadManagement = () => {
       <Dialog open={!!selectedLead} onOpenChange={(open) => !open && setSelectedLead(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-heading">Lead Details</DialogTitle>
+            <div className="flex items-center justify-between pr-8">
+              <DialogTitle className="font-heading">Lead Details</DialogTitle>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => selectedLead && setLeadToDelete(selectedLead)}
+              >
+                <Trash2 className="mr-1 h-3.5 w-3.5" />
+                Delete
+              </Button>
+            </div>
           </DialogHeader>
           {selectedLead && (
             <div className="space-y-4">
@@ -203,6 +242,26 @@ const LeadManagement = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!leadToDelete} onOpenChange={(open) => !open && setLeadToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the lead from <span className="font-semibold">{leadToDelete?.name}</span>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => leadToDelete && deleteMutation.mutate(leadToDelete.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
