@@ -18,14 +18,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Mail, Loader2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Lead = Tables<"leads">;
 
 const LeadManagement = () => {
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("all");
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["admin-leads"],
@@ -110,7 +120,11 @@ const LeadManagement = () => {
               </TableHeader>
               <TableBody>
                 {filtered.map((lead) => (
-                  <TableRow key={lead.id}>
+                  <TableRow
+                    key={lead.id}
+                    className="cursor-pointer"
+                    onClick={() => setSelectedLead(lead)}
+                  >
                     <TableCell className="font-medium">{lead.name}</TableCell>
                     <TableCell className="text-muted-foreground">{lead.email}</TableCell>
                     <TableCell className="text-muted-foreground">{lead.company || "—"}</TableCell>
@@ -127,6 +141,68 @@ const LeadManagement = () => {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={!!selectedLead} onOpenChange={(open) => !open && setSelectedLead(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-heading">Lead Details</DialogTitle>
+          </DialogHeader>
+          {selectedLead && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Name</p>
+                  <p className="font-medium text-foreground">{selectedLead.name}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Email</p>
+                  <a href={`mailto:${selectedLead.email}`} className="font-medium text-primary hover:underline flex items-center gap-1">
+                    <Mail className="h-3.5 w-3.5" />
+                    {selectedLead.email}
+                  </a>
+                </div>
+                {selectedLead.phone && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Phone</p>
+                    <p className="font-medium text-foreground flex items-center gap-1">
+                      <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                      {selectedLead.phone}
+                    </p>
+                  </div>
+                )}
+                {selectedLead.company && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Company</p>
+                    <p className="font-medium text-foreground flex items-center gap-1">
+                      <Building className="h-3.5 w-3.5 text-muted-foreground" />
+                      {selectedLead.company}
+                    </p>
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Service</p>
+                  <Badge variant="secondary">{selectedLead.service}</Badge>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Submitted</p>
+                  <p className="font-medium text-foreground flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                    {format(new Date(selectedLead.created_at), "MMM d, yyyy 'at' h:mm a")}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-1 pt-2 border-t border-border">
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <MessageSquare className="h-3.5 w-3.5" /> Message
+                </p>
+                <p className="text-foreground whitespace-pre-wrap text-sm leading-relaxed">
+                  {selectedLead.message}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
