@@ -34,7 +34,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare, Trash2, Circle, UserCheck, Star, XCircle } from "lucide-react";
+import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare, Trash2, Circle, UserCheck, Star, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -103,6 +103,9 @@ const LeadManagement = () => {
 
   const [statusFilter, setStatusFilter] = useState("all");
 
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
   const filtered = leads.filter((l) => {
     const matchesSearch =
       l.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -112,6 +115,17 @@ const LeadManagement = () => {
     const matchesStatus = statusFilter === "all" || l.status === statusFilter;
     return matchesSearch && matchesService && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedLeads = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Reset to page 1 when filters change
+  const handleSearch = (value: string) => { setSearch(value); setCurrentPage(1); };
+  const handleServiceFilter = (value: string) => { setServiceFilter(value); setCurrentPage(1); };
+  const handleStatusFilter = (value: string) => { setStatusFilter(value); setCurrentPage(1); };
 
   return (
     <div className="space-y-6">
@@ -134,11 +148,11 @@ const LeadManagement = () => {
               <Input
                 placeholder="Search by name, email, or company..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="pl-9"
               />
             </div>
-            <Select value={serviceFilter} onValueChange={setServiceFilter}>
+            <Select value={serviceFilter} onValueChange={handleServiceFilter}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Filter by service" />
               </SelectTrigger>
@@ -149,7 +163,7 @@ const LeadManagement = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={handleStatusFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
@@ -184,7 +198,7 @@ const LeadManagement = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((lead) => (
+                {paginatedLeads.map((lead) => (
                   <TableRow
                     key={lead.id}
                     className="cursor-pointer"
@@ -215,6 +229,42 @@ const LeadManagement = () => {
                 ))}
               </TableBody>
             </Table>
+          )}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-border px-4 py-3">
+              <p className="text-sm text-muted-foreground">
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} of {filtered.length}
+              </p>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? "default" : "outline"}
+                    size="sm"
+                    className="w-8"
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
