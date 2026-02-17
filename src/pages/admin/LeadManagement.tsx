@@ -34,7 +34,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare, Trash2 } from "lucide-react";
+import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare, Trash2, Circle, UserCheck, Star, XCircle } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -43,12 +43,33 @@ import type { Tables } from "@/integrations/supabase/types";
 
 type Lead = Tables<"leads">;
 
+const STATUS_OPTIONS = [
+  { value: "new", label: "New", icon: Circle, color: "text-blue-500" },
+  { value: "contacted", label: "Contacted", icon: UserCheck, color: "text-yellow-500" },
+  { value: "qualified", label: "Qualified", icon: Star, color: "text-green-500" },
+  { value: "closed", label: "Closed", icon: XCircle, color: "text-muted-foreground" },
+] as const;
+
 const LeadManagement = () => {
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("all");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
   const queryClient = useQueryClient();
+
+  const statusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await supabase.from("leads").update({ status }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-leads"] });
+      toast.success("Status updated");
+    },
+    onError: () => {
+      toast.error("Failed to update status");
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -80,13 +101,16 @@ const LeadManagement = () => {
 
   const services = [...new Set(leads.map((l) => l.service))];
 
+  const [statusFilter, setStatusFilter] = useState("all");
+
   const filtered = leads.filter((l) => {
     const matchesSearch =
       l.name.toLowerCase().includes(search.toLowerCase()) ||
       l.email.toLowerCase().includes(search.toLowerCase()) ||
       (l.company?.toLowerCase().includes(search.toLowerCase()) ?? false);
     const matchesService = serviceFilter === "all" || l.service === serviceFilter;
-    return matchesSearch && matchesService;
+    const matchesStatus = statusFilter === "all" || l.status === statusFilter;
+    return matchesSearch && matchesService && matchesStatus;
   });
 
   return (
@@ -125,6 +149,17 @@ const LeadManagement = () => {
                 ))}
               </SelectContent>
             </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                {STATUS_OPTIONS.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -144,6 +179,7 @@ const LeadManagement = () => {
                   <TableHead>Email</TableHead>
                   <TableHead>Company</TableHead>
                   <TableHead>Service</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Date</TableHead>
                 </TableRow>
               </TableHeader>
@@ -159,6 +195,18 @@ const LeadManagement = () => {
                     <TableCell className="text-muted-foreground">{lead.company || "—"}</TableCell>
                     <TableCell>
                       <Badge variant="secondary">{lead.service}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        const statusOpt = STATUS_OPTIONS.find((s) => s.value === lead.status);
+                        const Icon = statusOpt?.icon ?? Circle;
+                        return (
+                          <span className={`flex items-center gap-1.5 text-sm ${statusOpt?.color ?? ""}`}>
+                            <Icon className="h-3.5 w-3.5" />
+                            {statusOpt?.label ?? lead.status}
+                          </span>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {format(new Date(lead.created_at), "MMM d, yyyy")}
@@ -221,6 +269,30 @@ const LeadManagement = () => {
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground">Service</p>
                   <Badge variant="secondary">{selectedLead.service}</Badge>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Status</p>
+                  <Select
+                    value={selectedLead.status}
+                    onValueChange={(value) => {
+                      statusMutation.mutate({ id: selectedLead.id, status: value });
+                      setSelectedLead({ ...selectedLead, status: value });
+                    }}
+                  >
+                    <SelectTrigger className="w-[160px] h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS_OPTIONS.map((s) => (
+                        <SelectItem key={s.value} value={s.value}>
+                          <span className="flex items-center gap-1.5">
+                            <s.icon className={`h-3.5 w-3.5 ${s.color}`} />
+                            {s.label}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground">Submitted</p>
