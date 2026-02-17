@@ -112,6 +112,7 @@ export default function Contact() {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
     reset,
   } = useForm<ContactFormData>({
@@ -141,13 +142,30 @@ export default function Contact() {
 
       if (error) throw error;
 
+      // Trigger notification edge function
+      try {
+        await supabase.functions.invoke("notify-new-lead", {
+          body: {
+            record: {
+              name: data.name,
+              email: data.email,
+              service: data.service,
+              company: data.company || null,
+              message: data.message,
+            },
+          },
+        });
+      } catch (notifyErr) {
+        console.warn("Notification failed (non-blocking):", notifyErr);
+      }
+
       setIsSubmitted(true);
       toast({
         title: "Message sent successfully!",
-        description: "We'll get back to you within 24 hours.",
+        description: "We'll get back to you within 24 hours. Check your inbox for a confirmation.",
       });
       reset();
-      setTimeout(() => setIsSubmitted(false), 3000);
+      setTimeout(() => setIsSubmitted(false), 5000);
     } catch (error) {
       console.error("Failed to submit lead:", error);
       toast({
@@ -159,6 +177,8 @@ export default function Contact() {
       setIsSubmitting(false);
     }
   };
+
+  const messageValue = watch("message") || "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -290,7 +310,12 @@ export default function Contact() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="message">How Can We Help? *</Label>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="message">How Can We Help? *</Label>
+                        <span className={`text-xs ${messageValue.length > 900 ? "text-destructive" : "text-muted-foreground"}`}>
+                          {messageValue.length}/1000
+                        </span>
+                      </div>
                       <Textarea
                         id="message"
                         placeholder="Tell us about your project and goals..."

@@ -34,7 +34,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare, Trash2, Circle, UserCheck, Star, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Mail, Loader2, Phone, Building, Calendar, MessageSquare, Trash2, Circle, UserCheck, Star, XCircle, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -127,6 +127,29 @@ const LeadManagement = () => {
   const handleServiceFilter = (value: string) => { setServiceFilter(value); setCurrentPage(1); };
   const handleStatusFilter = (value: string) => { setStatusFilter(value); setCurrentPage(1); };
 
+  const exportCSV = () => {
+    const headers = ["Name", "Email", "Phone", "Company", "Service", "Status", "Message", "Date"];
+    const rows = filtered.map((l) => [
+      l.name,
+      l.email,
+      l.phone || "",
+      l.company || "",
+      l.service,
+      l.status,
+      `"${l.message.replace(/"/g, '""')}"`,
+      format(new Date(l.created_at), "yyyy-MM-dd"),
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `leads-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${filtered.length} leads`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -134,9 +157,9 @@ const LeadManagement = () => {
           <h1 className="font-heading text-2xl font-bold text-foreground">Lead Management</h1>
           <p className="text-sm text-muted-foreground">{leads.length} leads total</p>
         </div>
-        <Button>
-          <Mail className="mr-2 h-4 w-4" />
-          Export Leads
+        <Button onClick={exportCSV} disabled={filtered.length === 0}>
+          <Download className="mr-2 h-4 w-4" />
+          Export CSV
         </Button>
       </div>
 
