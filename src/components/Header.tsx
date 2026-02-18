@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -15,6 +15,22 @@ const navItems = [
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+
+  const toggleDarkMode = () => {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  };
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const shouldBeDark = saved === "dark" || (!saved && prefersDark);
+    setIsDark(shouldBeDark);
+    document.documentElement.classList.toggle("dark", shouldBeDark);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,7 +80,14 @@ export const Header = () => {
           </nav>
 
           {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
             <Button variant="ghost" className="text-muted-foreground">
               Sign In
             </Button>
@@ -104,6 +127,13 @@ export const Header = () => {
                 </Link>
               ))}
               <div className="pt-4 space-y-3">
+                <button
+                  onClick={toggleDarkMode}
+                  className="flex items-center gap-2 w-full py-2 text-muted-foreground hover:text-foreground transition-colors font-medium"
+                >
+                  {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  {isDark ? "Light Mode" : "Dark Mode"}
+                </button>
                 <Button variant="ghost" className="w-full justify-center">
                   Sign In
                 </Button>
